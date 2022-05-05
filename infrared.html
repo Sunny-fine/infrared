@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>红外图片</title>
+        <meta charset="UTF-8">
+        <meta name="description" content="An example using jPolygon">
+        <meta name="keywords" content="HTML,CSS,JavaScript,jPolygon">
+        <meta name="author" content="Matteo Mattei">
+        <link href="introjs.css" rel="stylesheet">
+        <link href="micromodal.css" rel="stylesheet">
+        <script src="jquery-3.4.1.min.js"></script>
+        <script src="intro.min.js"></script>
+        <script src="micromodal.js"></script>
+        <style>
+          .mark {
+            position: absolute;
+            display: block;
+            width: 8px;
+            height: 8px;
+            top: 100px;
+            left: 100px;
+            /*background-color: rgba(255,255,255,0.5);*/
+            background-image: url("cross.16.white.png");
+            background-size: contain;
+            z-index: 2;
+            cursor: pointer;
+          }
+          .outsideWrapper{ 
+              width:480px; height:640px; 
+              /*margin:20px 60px; */
+              border:1px solid blue;}
+          .insideWrapper{ 
+              width:100%; height:100%; 
+              position:relative;}
+          .coveredImage{ 
+              width:100%; height:100%; 
+              position:absolute; top:0px; left:0px;
+          }
+          .coveringCanvas{ 
+              width:100%; height:100%; 
+              position:absolute; top:0px; left:0px;
+              background-color: rgba(255,0,0,.1);
+          }          
+        </style>
+
+    </head>
+    <body onload="clear_canvas()">
+        <div style="float:left" class="outsideWrapper">
+          <div class="insideWrapper">
+            <div id='img'  >
+            <img src="FLIR_9_thermal.png" class="coveredImage"/>
+            </div>
+            <canvas  class="coveringCanvas" id="jPolygon" width="480" height="640" style="cursor:crosshair" data-imgsrc="" onmousedown="point_it(event)" onmouseup="mouse_up(event)" onmousemove="mouse_move(event)" onmousewheel="mouse_wheel(event)" oncontextmenu="return false;">
+							
+			 Your browser does not support the HTML5 canvas tag.
+            </canvas>
+          </div>
+        </div>
+
+        <div style="float:left; margin-left:20px;">
+            <div>
+				<button id="drawCircleBtn" onclick="circle()">圆形</button>
+                <button id="drawRectBtn" onclick="rectangle()">正方形</button>
+				<button id="selectBtn" onclick="sele()">选中</button>
+				<button id="moveBtn" onclick="move()">移动</button>
+				<button onclick="deleteGraph()">删除</button>
+				<button id="addComment" onclick="addComment()">添加注释</button>
+				<button id="removeComment" onclick="removeComment()">删除注释</button>
+                <p><strong>按圆形按钮之后点击图片画圆。</strong></p>
+				<p><strong>按正方形按钮之后点击图片画正方形。</strong></p>
+				<p><strong>按选中按钮之后点击已画图形，再滚动鼠标可放大或缩小图形。</strong></p>
+				<p><strong>按移动按钮之后可移动图形。</strong></p>
+				<p><strong>按选中按钮之后选中图形，再按删除按钮可删除图形。</strong></p>
+				<p><strong>按选中按钮之后需再点击一次去除选中才可画图。</strong></p>
+				<p><strong>按选中按钮之后点击图形，再点击添加注释，可添加注释。</strong></p>
+				
+
+				
+            </div>
+            <div>
+                <p><strong>坐标及温度:</strong></p>
+                <textarea id="coordinates" disabled="disabled" style="width:300px; height:50px;"></textarea>
+            </div>
+        </div>
+		<div id='mark100' ></div>
+        <div class="modal micromodal-slide" id="modal-1" aria-hidden="true">
+            <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+              <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+                <header class="modal__header">
+                  <h2 class="modal__title" id="modal-1-title">
+                    请添加注释
+                  </h2>
+                  <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+                </header>
+                <main class="modal__content" id="modal-1-content">
+                  <div id='mynote'></div>
+                </main>
+                <footer class="modal__footer">
+                  <button class="modal__btn modal__btn-primary">Continue</button>
+                  <button class="modal__btn" data-micromodal-close aria-label="Close this dialog window">Close</button>
+                </footer>
+              </div>
+            </div>
+        </div>
+        <a class="modal" data-micromodal-trigger="modal-1" href='javascript:;'></a>	
+        <script type="text/javascript" src="jPolygon.js"></script>
+    </body>
+</html>

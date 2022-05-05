@@ -1,0 +1,25 @@
+<html>
+<head>
+<script src="jquery-3.4.1.min.js"></script>
+<script src="jquery.csv.min.js"></script>
+</head>
+<body>
+<script>
+var data=[];
+$.ajax({
+    url: "temp1.csv",
+    async: true,
+    success: function (csvd) {
+        data = $.csv.toArrays(csvd);
+        console.log("data[0]", data[0]);
+        console.log("data[20]", data[0]);
+    },
+    dataType: "text",
+    complete: function () {
+        // call a function on complete 
+        console.log("done!");
+    }
+});
+</script>
+</body>
+</html>

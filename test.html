@@ -1,0 +1,97 @@
+<html>
+<head>
+<style> 
+  div#mark1 {
+  position: absolute;
+  display: block;
+  width: 8;
+  height: 8;
+  top: 100;
+  left: 100;
+  /*background-color: rgba(255,255,255,0.5);*/
+  background-image: url("cross.16.white.png");
+  background-size: contain;
+  z-index: 2;
+  cursor: pointer;
+}
+</style>
+<link href="introjs.css" rel="stylesheet">
+</head>
+<body>
+<div id='img'><img onclick="getTemp(event)" onmousemove="showCoords(event)" onmouseout="clearCoor()"src='thermalimage_thermal.png' />
+<div id='mark1' ></div>
+</div>
+<div id='info'>Temperature Info</div>
+<script type="text/javascript" src="intro.min.js"></script>
+<script>
+function $(sl) { // input as css selector
+  try {
+    var firstAnswer=document.querySelector(sl);
+    return firstAnswer;
+  } catch (e) {
+    console.log("Invalid Selector: ", sl);
+  }
+}
+function id(id) {
+  return document.getElementById(id);
+}
+var intro = introJs();
+intro.setOption("hintButtonLabel",'Remove');
+intro.onhintclick(function(hintElement, item, stepId) {
+   console.log('hint clicked', hintElement, item, stepId);
+});
+
+intro.onhintclose(function (stepId) {
+   console.log('hint closed', stepId);
+   this.removeHint(stepId);
+   $('div#mark1').style.display = 'none';
+});
+function showCoords(event) {
+  var img = id("img");
+  var x = event.offsetX;//event.clientX;
+  var y = event.offsetY;//event.clientY;
+  //console.log(x, y);
+  var coor = "X coords: " + x + ", Y coords: " + y;
+  id("info").innerHTML = coor;
+
+}
+function getTemp(event) {
+  var img = id("img");
+  var x = event.offsetX;//event.clientX;
+  var y = event.offsetY;//event.clientY;
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      id("info").innerHTML = this.responseText;
+      //console.log(this.responseText);
+    let temp = this.responseText.split(',')[2].split(':')[1];
+    temp=parseFloat(temp);
+    if (temp > 30.0) {
+      $('div#mark1').style.backgroundImage="url('cross.16.png')";
+     } else {
+      $('div#mark1').style.backgroundImage="url('cross.16.white.png')";
+     }
+  var hints = {hints:[{
+                element: $('div#mark1'),
+                hint: "This is a note: " + this.responseText + "<input id='noteid'>",
+                hintPosition: 'middle-middle'
+              }]};
+    intro.setOptions(hints); // json obj for options
+    intro.addHints();
+  }
+  };
+  xhttp.open("POST", "getTemp.php", true);
+  xhttp.send(JSON.stringify({x, y}));
+  // update mark1's top and left
+  //console.log($('div#mark1').offsetTop);
+  $('div#mark1').style.top = y+$('div#img').offsetTop-1;
+  $('div#mark1').style.left = x+$('div#img').offsetLeft-1;
+  $('div#mark1').style.display = 'block';
+}
+
+function clearCoor() {
+  id("info").innerHTML = "";
+  //console.log($('div#img').offsetTop, $('div#img').offsetLeft);
+}
+</script>
+</body></html>
