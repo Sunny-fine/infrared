@@ -268,7 +268,7 @@ function point_it(event) {
 	pointY = y;
 	var coor = "X coords: " + x + ", Y coords: " + y;
     document.getElementById('coordinates').value = coor;
-	getTemp(x, y);
+	getTemp(event);
 	if (circleFlg == true || rectangleFlg == true) {
 		rect = canvas.getBoundingClientRect();
 		x = event.clientX - rect.left;
@@ -372,7 +372,7 @@ function mouse_move(event) {
 	y = event.offsetY;//event.clientY;
 	var coor = "X coords: " + x + ", Y coords: " + y;
         document.getElementById('coordinates').value = coor;
-	getTemp(x, y);
+	getTemp(event);
 	var rect = canvas.getBoundingClientRect();
 	x = event.clientX - rect.left;
 	y = event.clientY - rect.top;
@@ -570,7 +570,6 @@ function addComment()
 		*/
 		//MicroModal.show('modal-1');
 		AddCrossHint(pointX, pointY);
-		getTemp(pointX, pointY);
 	}
 
 
@@ -710,23 +709,25 @@ function $my(sl) { // input as css selector
 	return newdiv;
   }
 
-
-  function getTemp(x, y) {
-	var lastTime=Date.now();
-	var xhttp = new XMLHttpRequest();
+  var lastTime=Date.now();
+  var xhttp = new XMLHttpRequest();
+  function getTemp(event) {
 	var curtime=Date.now();
 	//console.log(curtime, lastTime, curtime-lastTime);
-//	var x = event.offsetX;//event.clientX;
-//	var y = event.offsetY;//event.clientY;
-	xhttp.onreadystatechange = function() {
-	if (this.readyState == 4 && this.status == 200) {
-		let temp = this.responseText.split(',')[2].split(':')[1];
-		temp=parseFloat(temp);
-  		temp = temp + "°C";
-		var response = this.responseText.split(',')[0] + this.responseText.split(',')[1] + this.responseText.split(',')[2].split(':')[0] + ": " + temp;
-		document.getElementById('coordinates').value = response;
+	if (curtime - lastTime > 200) {
+		lastTime = curtime;
+	} else {
+		return;
 	}
-  };
+	var x = event.offsetX;//event.clientX;
+	var y = event.offsetY;//event.clientY;
+	xhttp.onreadystatechange = function() {
+	  if (this.readyState == 4 && this.status == 200) {
+	  document.getElementById('coordinates').value = this.responseText;
+	  let temp = this.responseText.split(',')[2].split(':')[1];
+	  temp=parseFloat(temp);
+	};
+  }
   xhttp.open("POST", "getTemp.php", true);
   xhttp.send(JSON.stringify({x, y}));
 } 
