@@ -8,7 +8,7 @@
  $spl = new SplFileObject('FLIR_9.csv');
  $spl->seek($d["y"]*480+$d["x"]+1);
  $csv = explode(",",$spl->current());
- print_r("X: ".$csv[1].", "."Y: ".$csv[0].", "."T:".$csv[2]); 
+ print_r("X: ".$csv[1].", "."Y: ".$csv[0].", "."T: ".$csv[2]); 
  #echo strval($data->x).' '.strval($data->y);
  #print("=$data->x=\n");
  #phpinfo();

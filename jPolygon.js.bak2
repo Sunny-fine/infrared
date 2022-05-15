@@ -268,7 +268,7 @@ function point_it(event) {
 	pointY = y;
 	var coor = "X coords: " + x + ", Y coords: " + y;
     document.getElementById('coordinates').value = coor;
-	getTemp(event);
+	getTemp(x, y);
 	if (circleFlg == true || rectangleFlg == true) {
 		rect = canvas.getBoundingClientRect();
 		x = event.clientX - rect.left;
@@ -372,7 +372,7 @@ function mouse_move(event) {
 	y = event.offsetY;//event.clientY;
 	var coor = "X coords: " + x + ", Y coords: " + y;
         document.getElementById('coordinates').value = coor;
-	getTemp(event);
+	getTemp(x, y);
 	var rect = canvas.getBoundingClientRect();
 	x = event.clientX - rect.left;
 	y = event.clientY - rect.top;
@@ -570,6 +570,7 @@ function addComment()
 		*/
 		//MicroModal.show('modal-1');
 		AddCrossHint(pointX, pointY);
+		getTemp(pointX, pointY);
 	}
 
 
@@ -642,7 +643,7 @@ function $my(sl) { // input as css selector
 	  }
 	  hints.hints[index-1] = {
 		element: $my('div#mark'+(index)),
-		hint: content+"°C" + "<div><input id='notemark' placeholder='註釋..' value='' onchange='saveNote("+index+",this.value)'></div>",
+		hint: content + "<input id='notemark' height='96px' placeholder='註釋..' value='' onchange='saveNote("+index+",this.value)'>",
 		hintPosition: 'middle-middle'
 	  }
 	}
@@ -688,7 +689,7 @@ function $my(sl) { // input as css selector
 		}
 		//$my('p#tempinfo').innerHTML = this.responseText;
 		//MicroModal.show('modal-1');
-		addHint(markcnt, this.responseText);
+		addHint(markcnt, this.responseText+"°C");
 
 		intro.setOptions(hints); // json obj for options
 		intro.addHints();
@@ -709,27 +710,23 @@ function $my(sl) { // input as css selector
 	return newdiv;
   }
 
-  var lastTime=Date.now();
-  var xhttp = new XMLHttpRequest();
-  function getTemp(event) {
+
+  function getTemp(x, y) {
+	var lastTime=Date.now();
+	var xhttp = new XMLHttpRequest();
 	var curtime=Date.now();
 	//console.log(curtime, lastTime, curtime-lastTime);
-	if (curtime - lastTime > 50) {
-		lastTime = curtime;
-	} else {
-		return;
-	}
-	var x = event.offsetX;//event.clientX;
-	var y = event.offsetY;//event.clientY;
+//	var x = event.offsetX;//event.clientX;
+//	var y = event.offsetY;//event.clientY;
 	xhttp.onreadystatechange = function() {
-	  if (this.readyState == 4 && this.status == 200) {
-     let temp = this.responseText.split(',')[2].split(':')[1];
-     temp=parseFloat(temp);
-       temp = temp + "°C";
-     var response = this.responseText.split(',')[0] + this.responseText.split(',')[1] + this.responseText.split(',')[2].split(':')[0] + ": " + temp;
-     document.getElementById('coordinates').value = response;
-	};
-  }
+	if (this.readyState == 4 && this.status == 200) {
+		let temp = this.responseText.split(',')[2].split(':')[1];
+		temp=parseFloat(temp);
+  		temp = temp + "°C";
+		var response = this.responseText.split(',')[0] + this.responseText.split(',')[1] + this.responseText.split(',')[2].split(':')[0] + ": " + temp;
+		document.getElementById('coordinates').value = response;
+	}
+  };
   xhttp.open("POST", "getTemp.php", true);
   xhttp.send(JSON.stringify({x, y}));
 } 
